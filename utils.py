@@ -87,6 +87,9 @@ def normalizealltest(ohe_testdata, category, minmaxes):
         result.append(n_ohe_test)
     return np.array(result)
 
+def g(x): # sigmoid function
+    return np.exp(x) / (1 + np.exp(x))
+    
 def same(attributecolumn):
     return all(item == attributecolumn[0] for item in attributecolumn)
 
