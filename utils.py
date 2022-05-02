@@ -54,8 +54,8 @@ def onehotencoder(data,category):
     dataT = np.delete(dataT,droplist,axis=0)
     return dataT.T, categorycopy
 
-def normalizetrain(data, category): # input data in by row/by instance
-    dataTC = data.T.copy()
+def normalizetrain(ohe_traindata, category): # input data in by row/by instance
+    dataTC = ohe_traindata.T.copy()
     minmaxes = []
     i = 0
     for oneattribute in category:
@@ -70,8 +70,22 @@ def normalizetrain(data, category): # input data in by row/by instance
         else:
             minmaxes.append([0.0,1.0])
         i=i+1
-    return dataTC.T, category, minmaxes
-    
+    return dataTC.T, minmaxes
+
+def normalizeonetest(instance_data, category, minmaxes):
+    i = 0
+    for oneattribute in category:
+        if category[oneattribute] == 'numerical':
+            instance_data[i] = (instance_data[i] - minmaxes[i][0])/(minmaxes[i][1] - minmaxes[i][0])
+        i += 1
+    return instance_data
+
+def normalizealltest(ohe_testdata, category, minmaxes):
+    result = []
+    for i in ohe_testdata:
+        n_ohe_test = normalizeonetest(i, category, minmaxes)
+        result.append(n_ohe_test)
+    return np.array(result)
 
 def same(attributecolumn):
     return all(item == attributecolumn[0] for item in attributecolumn)
