@@ -31,7 +31,7 @@ def onehotencoder(data,category):
             hotted = enc.fit_transform(hotneeded.reshape(-1,1))
             for j in enc.categories_[0]:
                 newname = cat+'_'+str(j)
-                appendeddict[newname] = 'numerical'
+                appendeddict[newname] = 'ohe_numerical'
             dataT = np.append(dataT,hotted.T,axis=0)
         if category[cat] == 'class':
             hotneeded = dataT[i]
@@ -53,6 +53,25 @@ def onehotencoder(data,category):
         i += 1
     dataT = np.delete(dataT,droplist,axis=0)
     return dataT.T, categorycopy
+
+def normalizetrain(data, category): # input data in by row/by instance
+    dataTC = data.T.copy()
+    minmaxes = []
+    i = 0
+    for oneattribute in category:
+        if category[oneattribute] == 'numerical':
+            colmin = np.min(dataTC[i])
+            colmax = np.max(dataTC[i])
+            singleminmax = [colmin,colmax]
+            # normalize to 0 to 1
+            for j in range(len(dataTC[i])):
+                dataTC[i][j] = (dataTC[i][j] - colmin)/(colmax - colmin)
+            minmaxes.append(singleminmax)
+        else:
+            minmaxes.append([0.0,1.0])
+        i=i+1
+    return dataTC.T, category, minmaxes
+    
 
 def same(attributecolumn):
     return all(item == attributecolumn[0] for item in attributecolumn)
