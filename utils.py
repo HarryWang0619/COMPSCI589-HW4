@@ -88,7 +88,7 @@ def normalizealltest(ohe_testdata, category, minmaxes):
     return np.array(result)
 
 def g(x): # sigmoid function
-    return np.exp(x) / (1 + np.exp(x))
+    return 1/(1 + np.exp(-x))
 
 def transposelistoflist(l):
     newlistoflist = []
