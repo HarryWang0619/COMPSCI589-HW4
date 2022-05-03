@@ -49,9 +49,7 @@ def blame(predict_output, expected_output, weights_list, a_list, biasterm=True):
     current_delta = delta_layer_l
 
     while i > 0:
-        attributeblame = np.dot(a_list[i+1],(1-a_list[i+1]))
-        rawblame = np.dot(weights_list[i].T,current_delta)
-        delta_layer_now = np.dot(rawblame,attributeblame)
+        delta_layer_now = np.multiply(np.multiply(np.dot(weights_list[i].T,current_delta),a_list[i]),(1-a_list[i]))
         if biasterm:
             delta_layer_now[0] = 1 # the first attribute is the bias
             current_delta = delta_layer_now[1:] # the first attribute is the bias
