@@ -40,3 +40,25 @@ def sumofweights(listofweights,bias=True): # computes the square of all weights 
         else:
             sum += np.sum(np.square(weight))
     return sum
+
+def blame(real_output, expected_output, weights_list, attribute_list, biasterm=True): # This is to find out the delta function
+    deltalist = []
+    delta_layer_l = expected_output - real_output
+    deltalist.append(delta_layer_l)
+    i = len(weights_list)-1
+    current_delta = delta_layer_l
+
+    while i > 0:
+        attributeblame = np.dot(attribute_list[i+1],(1-attribute_list[i+1]))
+        rawblame = np.dot(weights_list[i].T,current_delta)
+        delta_layer_now = np.dot(rawblame,attributeblame)
+        if biasterm:
+            delta_layer_now[0] = 1 # the first attribute is the bias
+            current_delta = delta_layer_now[1:] # the first attribute is the bias
+        else:
+            current_delta = delta_layer_now
+        deltalist.append(current_delta)
+        i-=1
+    deltalist.reverse()
+    
+    return deltalist
