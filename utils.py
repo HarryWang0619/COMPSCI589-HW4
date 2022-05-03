@@ -89,7 +89,16 @@ def normalizealltest(ohe_testdata, category, minmaxes):
 
 def g(x): # sigmoid function
     return np.exp(x) / (1 + np.exp(x))
-    
+
+def transposelistoflist(l):
+    newlistoflist = []
+    for i in range(len(l[0])):
+        newlist = []
+        for j in range(len(l)):
+            newlist.append(l[j][i])
+        newlistoflist.append(newlist)
+    return newlistoflist
+
 def same(attributecolumn):
     return all(item == attributecolumn[0] for item in attributecolumn)
 

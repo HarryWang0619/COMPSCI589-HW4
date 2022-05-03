@@ -62,3 +62,14 @@ def blame(real_output, expected_output, weights_list, attribute_list, biasterm=T
     deltalist.reverse()
     
     return deltalist
+
+def gradientD(weights_list,deltalist,attributelist,biasterm=True):
+    gradlist = []
+    for i in range(len(weights_list)):
+        attributenow = attributelist[i]
+        deltanow = np.array([deltalist[i]]).T
+        dotproduct = deltanow*attributenow
+        # print('dotshape',dotproduct.shape)
+        gradlist.append(dotproduct)
+    return gradlist
+
