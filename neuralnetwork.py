@@ -35,8 +35,10 @@ def costfunction(expected_output, actual_output):
 def sumofweights(listofweights,bias=True): # computes the square of all weights of the network and sum them up
     sum = 0
     for weight in listofweights:
+        w = weight.copy()
+        w[:, 0] = 0
         if bias:
-            sum += np.sum(np.square(weight[1:]))
+            sum += np.sum(np.square(w))
         else:
             sum += np.sum(np.square(weight))
     return sum
