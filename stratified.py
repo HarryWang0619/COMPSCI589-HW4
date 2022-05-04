@@ -1,4 +1,7 @@
 from utils import *
+from run import *
+from neuralnetwork import *
+from evaluationmatrix import *
 
 # In this file, I reused the stratified cross-validation method from the last assignment.
 
@@ -31,29 +34,26 @@ def stratifiedkfold(data, categorydict, k = 10):
     
     return combined
 
-
-#!!!!!!!! I will change the validation function to let it take neural network.
-
-# def kfoldcrossvalid(data, categorydict, k=10, ntree=10, maxdepth=5, minimalsize=10, minimalgain=0.01, algortype='id3', bootstrapratio = 0.1):
-#     folded = stratifiedkfold(data, categorydict, k)
-#     listofnd = []
-#     accuracylist = []
-#     for i in range(k):
-#         # print("at fold", i)
-#         testdataset = folded[i]
-#         foldedcopy = folded.copy()
-#         foldedcopy.pop(i)
-#         traindataset = np.vstack(foldedcopy) 
-#         correctcount = 0
-#         trainforest = plantforest(traindataset,categorydict,ntree,maxdepth,minimalsize,minimalgain,algortype,bootstrapratio)
-#         emptyanalysis = []
-#         # testdataset = traindataset
-#         for instance in testdataset:
-#             predict, correct = forestvote(trainforest,instance,categorydict)
-#             emptyanalysis.append([predict, correct])
-#             if predict == correct:
-#                 correctcount += 1
-#         listofnd.append(np.array(emptyanalysis))
-#         accuracylist.append(correctcount/len(testdataset))
-#     acc = np.mean(accuracylist)
-#     return listofnd, acc
+def kfoldcrossvalidneuralnetwork(raw_data, rawcategory, layerparameter, k = 10, minibatchk = 15, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.00001, softstop = 6000, printq = False):
+    folded = stratifiedkfold(raw_data, rawcategory, k)
+    listofnd = []
+    accuracylist = []
+    listofjlist = []
+    for i in range(k):
+        rawtestdataset = folded[i]
+        rawfoldedcopy = folded.copy()
+        rawfoldedcopy.pop(i)
+        rawtraindataset = np.vstack(rawfoldedcopy)
+        ohe_traindata,ohe_category = onehotencoder(rawtraindataset, rawcategory)
+        ohe_testdata = onehotencoder(rawtestdataset, rawcategory)[0]
+        n_ohe_train,minmax = normalizetrain(ohe_traindata, ohe_category)
+        print(n_ohe_train.shape)
+        n_ohe_test = normalizealltest(ohe_testdata, ohe_category, minmax)
+        finalweight, jlist = train_neural_network(n_ohe_train, ohe_category, layerparameter, minibatchk, lambda_reg, learning_rate, epsilon_0, softstop, printq)
+        predictvsexpect, singleaccuracy = predict_many_nn(n_ohe_test, finalweight, ohe_category)
+        listofnd.append(predictvsexpect)
+        accuracylist.append(singleaccuracy)
+        listofjlist.append(jlist)
+    acc = np.mean(accuracylist)
+    return listofnd, acc, listofjlist
+    

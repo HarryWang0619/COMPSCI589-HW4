@@ -1,5 +1,4 @@
 from utils import *
-from stratified import *
 
 def initialize_weights(ohe_category,layer_parameter, biasterm=True):
     weight_matrix_list = []
@@ -74,11 +73,14 @@ def gradientD(weights_list,deltalist,attributelist,biasterm=True):
     return gradlist
 
 # Forward propagation vectorized
-def neural_network(normed_hotted_data,ohe_category,weights_list,biasterm=True, minibatchk = 15, lambda_reg = 0.2, learning_rate = 0.01):
+def neural_network(normed_hotted_data,ohe_category,weights_list, minibatchk = 15, lambda_reg = 0.2, learning_rate = 0.01):
+    biasterm=True
     normed_ohe_copy = normed_hotted_data.copy()
     if minibatchk > len(normed_hotted_data):
         minibatchk = len(normed_hotted_data)
     np.random.shuffle(normed_ohe_copy)
+    # print('minibatchk',minibatchk)
+    # print('shape of normed_ohe_copy',normed_ohe_copy.shape)
     splitted = np.array_split(normed_ohe_copy, minibatchk)
     
     inputcategory, outputcategory = [],[]

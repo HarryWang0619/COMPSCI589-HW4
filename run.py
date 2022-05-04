@@ -44,7 +44,5 @@ if __name__=="__main__":
     winedata, winecategory = importwinedata()
     cancerdata, cancercategory = importcancerdata()
     cmcdata,cmccategory = importcmcdata()
-    ohe_house_data, ohe_house_category = onehotencoder(housedata, housecategory)
-    ohe_wine_data, ohe_wine_category = onehotencoder(winedata,winecategory)
-    ohe_cmc_data, ohe_cmc_category = onehotencoder(cmcdata,cmccategory)
-    ohe_cancer_data, ohe_cancer_category = onehotencoder(cancerdata,cancercategory)
+    listoflistofoutputs, acc, listofjlist = kfoldcrossvalidneuralnetwork(housedata, housecategory, [5,1], k = 10, minibatchk = 15, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.00001, softstop = 6000)
+
