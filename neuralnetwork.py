@@ -151,3 +151,76 @@ def neural_network(normed_hotted_data,ohe_category,weights_list,biasterm=True, m
 
     return weights_list, allj, j #j is j without regularization: only for testing
 
+def train_neural_network(normed_ohetraining_data,ohe_category,layerparameter, minibatchk = 15, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.00001, softstop = 8000, printq = False):
+    init_weight = initialize_weights(ohe_category,layerparameter)
+    updated_weight, jsum, purej = neural_network(normed_ohetraining_data,ohe_category,init_weight, minibatchk, lambda_reg, learning_rate)
+    epsilon = epsilon_0 + 20
+    currentj = jsum
+    smallestj = jsum
+    count = 0
+    jlist = []
+    jlist.append(currentj)
+    while ((epsilon > epsilon_0) or (count < softstop) or (currentj >= smallestj)) and (count < (softstop+5000)):
+        if printq:
+            print('currentj',currentj)
+            print('count',count)
+        count += 1
+        updated_weight, jsum, purej = neural_network(normed_ohetraining_data,ohe_category,updated_weight,minibatchk,lambda_reg,learning_rate)
+        epsilon = jsum - currentj
+        currentj = jsum
+        jlist.append(currentj)
+        if currentj < smallestj:
+            smallestj = currentj
+    
+    return updated_weight, jlist
+
+def predictoneinstance(inputdata,weightl): # inputdata here doesn't include the class and bias.
+    current_layer_a = np.append(1,inputdata)
+    current_layer_index = 0
+    alist = []
+    alist.append(current_layer_a)
+    for theta in weightl:
+        z = np.dot(theta,current_layer_a)
+        a = g(z)
+        current_layer_a = np.append(1,a) if (current_layer_index+1 != len(weightl)) else a
+        alist.append(current_layer_a)
+        current_layer_index += 1
+        raw_output = a
+    predict_output = current_layer_a
+
+    if len(predict_output) <=1:
+        predict_output[0] = 0 if predict_output[0] <= 0.5 else 1
+    else:
+        predict_output[np.where(predict_output==np.max(predict_output))] = 1
+        predict_output[np.where(predict_output!=1)] = 0
+    
+    return predict_output, raw_output 
+
+def predict_many_nn(testdatafull, ohecategory, weight):
+    n = 0 
+    inputindex, outputindex = [],[]
+    for i in ohecategory:
+        if ohecategory[i] != 'class_numerical':
+            inputindex.append(n)
+        else:
+            outputindex.append(n)
+        n += 1
+    predictvsexpectlist = [] # list of list of predict and expect/actual
+
+    for instance in testdatafull:
+        datainput = instance[inputindex]
+        expect_output = instance[outputindex]
+        predict_output, raw_output = predictoneinstance(datainput,weight)
+        # process the index of value 1 in np.array
+        processdexpect = np.where(expect_output==1)[0][0]
+        processdpredict = np.where(predict_output==1)[0][0]
+        predictvsexpectlist.append([processdpredict,processdexpect])
+
+    correct = 0
+    for outputtup in predictvsexpectlist:
+        if outputtup[0] == outputtup[1]:
+            correct += 1
+    accuracy = correct/len(predictvsexpectlist)
+
+    return predictvsexpectlist, accuracy
+    

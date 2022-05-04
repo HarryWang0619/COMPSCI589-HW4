@@ -44,3 +44,7 @@ if __name__=="__main__":
     winedata, winecategory = importwinedata()
     cancerdata, cancercategory = importcancerdata()
     cmcdata,cmccategory = importcmcdata()
+    ohe_house_data, ohe_house_category = onehotencoder(housedata, housecategory)
+    ohe_wine_data, ohe_wine_category = onehotencoder(winedata,winecategory)
+    ohe_cmc_data, ohe_cmc_category = onehotencoder(cmcdata,cmccategory)
+    ohe_cancer_data, ohe_cancer_category = onehotencoder(cancerdata,cancercategory)
