@@ -46,6 +46,6 @@ if __name__=="__main__":
     cancerdata, cancercategory = importcancerdata()
     cmcdata,cmccategory = importcmcdata()
     layerparameter = [5,4,3]
-    listoflistofoutputs, acc, listofjlist = kfoldcrossvalidneuralnetwork(housedata, housecategory, layerparameter, k = 5, minibatchk = 10, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.0001, softstop = 2000, printq = False)
+    listoflistofoutputs, acc, listofjlist = kfoldcrossvalidneuralnetwork(housedata, housecategory, layerparameter, k = 10, minibatchk = 60, lambda_reg = 0.15, learning_rate = 0.001, epsilon_0 = 0.0001, softstop = 1500, printq = False)
     print(acc)
 
