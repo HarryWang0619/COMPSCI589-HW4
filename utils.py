@@ -98,9 +98,3 @@ def transposelistoflist(l):
             newlist.append(l[j][i])
         newlistoflist.append(newlist)
     return newlistoflist
-
-def same(attributecolumn):
-    return all(item == attributecolumn[0] for item in attributecolumn)
-
-def majority(attributecolumn):
-    return np.argmax(np.bincount(attributecolumn.astype(int)))

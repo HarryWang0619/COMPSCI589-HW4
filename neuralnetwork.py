@@ -162,7 +162,7 @@ def train_neural_network(normed_ohetraining_data,ohe_category,layerparameter, mi
     count = 0
     jlist = []
     jlist.append(currentj)
-    while ((epsilon > epsilon_0) or (count < softstop) or (currentj >= smallestj)) and (count < (softstop+5000)):
+    while ((epsilon > epsilon_0) or (count < softstop) or (currentj >= smallestj)) and (count < (softstop)):
         if printq:
             print('currentj',currentj)
             print('count',count)

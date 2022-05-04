@@ -45,6 +45,7 @@ if __name__=="__main__":
     winedata, winecategory = importwinedata()
     cancerdata, cancercategory = importcancerdata()
     cmcdata,cmccategory = importcmcdata()
-    listoflistofoutputs, acc, listofjlist = kfoldcrossvalidneuralnetwork(housedata, housecategory, [5,1], k = 10, minibatchk = 15, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.0001, softstop = 1000, printq = True)
+    layerparameter = [5,4,3]
+    listoflistofoutputs, acc, listofjlist = kfoldcrossvalidneuralnetwork(housedata, housecategory, layerparameter, k = 5, minibatchk = 10, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.0001, softstop = 2000, printq = False)
     print(acc)
 
