@@ -1,5 +1,6 @@
 from utils import *
 from stratified import *
+from neuralnetwork import *
 
 def importhousedata():
     house = importfile('hw3_house_votes_84.csv', ',')
@@ -44,5 +45,6 @@ if __name__=="__main__":
     winedata, winecategory = importwinedata()
     cancerdata, cancercategory = importcancerdata()
     cmcdata,cmccategory = importcmcdata()
-    listoflistofoutputs, acc, listofjlist = kfoldcrossvalidneuralnetwork(housedata, housecategory, [5,1], k = 10, minibatchk = 15, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.00001, softstop = 6000)
+    listoflistofoutputs, acc, listofjlist = kfoldcrossvalidneuralnetwork(housedata, housecategory, [5,1], k = 10, minibatchk = 15, lambda_reg = 0.15, learning_rate = 0.01, epsilon_0 = 0.0001, softstop = 1000, printq = True)
+    print(acc)
 

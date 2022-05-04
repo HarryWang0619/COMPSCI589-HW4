@@ -40,6 +40,8 @@ def kfoldcrossvalidneuralnetwork(raw_data, rawcategory, layerparameter, k = 10, 
     accuracylist = []
     listofjlist = []
     for i in range(k):
+        if printq:
+            print('fold',i+1)
         rawtestdataset = folded[i]
         rawfoldedcopy = folded.copy()
         rawfoldedcopy.pop(i)
@@ -47,10 +49,9 @@ def kfoldcrossvalidneuralnetwork(raw_data, rawcategory, layerparameter, k = 10, 
         ohe_traindata,ohe_category = onehotencoder(rawtraindataset, rawcategory)
         ohe_testdata = onehotencoder(rawtestdataset, rawcategory)[0]
         n_ohe_train,minmax = normalizetrain(ohe_traindata, ohe_category)
-        print(n_ohe_train.shape)
         n_ohe_test = normalizealltest(ohe_testdata, ohe_category, minmax)
         finalweight, jlist = train_neural_network(n_ohe_train, ohe_category, layerparameter, minibatchk, lambda_reg, learning_rate, epsilon_0, softstop, printq)
-        predictvsexpect, singleaccuracy = predict_many_nn(n_ohe_test, finalweight, ohe_category)
+        predictvsexpect, singleaccuracy = predict_many_nn(n_ohe_test, ohe_category, finalweight)
         listofnd.append(predictvsexpect)
         accuracylist.append(singleaccuracy)
         listofjlist.append(jlist)
