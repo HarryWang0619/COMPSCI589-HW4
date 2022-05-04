@@ -29,8 +29,8 @@ def initialize_weights(ohe_category,layer_parameter, biasterm=True):
     return weight_matrix_list
 
 def costfunction(expected_output, actual_output):
-    j = -np.dot(expected_output,np.log(actual_output)) - np.dot((1 - expected_output),np.log(1 - actual_output))
-    return j
+    j = -np.multiply(expected_output,np.log(actual_output)) - np.multiply((1 - expected_output),np.log(1 - actual_output))
+    return np.sum(j)
 
 def sumofweights(listofweights,bias=True): # computes the square of all weights of the network and sum them up
     sum = 0

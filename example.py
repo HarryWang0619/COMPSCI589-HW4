@@ -32,6 +32,10 @@ exceptout1 = trainingdata1[1]
 exceptout2 = trainingdata2[1]
 lambda1 = 0
 
+def costfunction(expected_output, actual_output):
+    j = -np.multiply(expected_output,np.log(actual_output)) - np.multiply((1 - expected_output),np.log(1 - actual_output))
+    return np.sum(j)
+
 def forwardtest(inputdata,weightl,expectedout):
     current_layer_a = inputdata
     print('current_a at 1 is',current_layer_a)
@@ -50,6 +54,7 @@ def forwardtest(inputdata,weightl,expectedout):
     print('exceptout is', expectedout)
     print('cost is', costfunction(expectedout,result))
     return result, costfunction(expectedout,result), alist
+
 
 print('example 1 instance 1 forward test')
 r1,j1,a1 = forwardtest(inputdata1,weightlist1,exceptout1)
