@@ -73,3 +73,81 @@ def gradientD(weights_list,deltalist,attributelist,biasterm=True):
         gradlist.append(dotproduct)
     return gradlist
 
+# Forward propagation vectorized
+def neural_network(normed_hotted_data,ohe_category,weights_list,biasterm=True, minibatchk = 15, lambda_reg = 0.2, learning_rate = 0.01):
+    normed_ohe_copy = normed_hotted_data.copy()
+    if minibatchk > len(normed_hotted_data):
+        minibatchk = len(normed_hotted_data)
+    np.random.shuffle(normed_ohe_copy)
+    splitted = np.array_split(normed_ohe_copy, minibatchk)
+    
+    inputcategory, outputcategory = [],[]
+    inputindex, outputindex = [],[]
+    n = 0
+    for i in ohe_category:
+        if ohe_category[i] != 'class_numerical':
+            inputcategory.append(i) # name of the input category
+            inputindex.append(n) # index of the input category
+        else:
+            outputcategory.append(i) # name of the output category
+            outputindex.append(n) # index of the output category
+        n += 1
+    
+    b = 1 if biasterm else 0
+    
+    for onebatch in splitted:
+        onebatch = onebatch.T
+        input_data = onebatch[inputindex].T
+        output_data = onebatch[outputindex].T
+        # input_data_mean = onebatch[inputindex].mean(axis=1)
+        output_data = onebatch[outputindex].T
+
+        # forward propagation
+        instance_index = 0
+        j = 0
+        listofgradient = []
+        for one_instance in input_data:
+            current_layer_a = np.append(1,one_instance) if b == 1 else one_instance
+            # input layer is the current layer
+            current_layer_index = 0
+            output_expect = output_data[instance_index]
+            attributesnobias = [one_instance]
+            attributeswbias = [current_layer_a]
+            for theta in weights_list:
+                z = np.dot(theta,current_layer_a)
+                a = g(z)
+                current_layer_a = np.append(1,a) if (b == 1) and (current_layer_index+1 != len(weights_list)) else a
+                attributesnobias.append(a)
+                attributeswbias.append(current_layer_a)
+                current_layer_index += 1
+
+            output_predict = current_layer_a # the last attribute is the output for this batch.
+            instance_index += 1
+            j += costfunction(output_expect,output_predict)
+
+            # calculate delta blame (back propagation)
+            listofdelta = blame(output_predict,output_expect,weights_list, attributeswbias)
+            thisgradient = gradientD(weights_list,listofdelta,attributeswbias,biasterm)
+            listofgradient.append(thisgradient)
+        
+        gradientP = [lambda_reg*t for t in weights_list]
+        # first column in singleP in the np.array = 0
+        for singleP in gradientP:
+            singleP[:, 0] = 0
+        
+        grad_D_transpose = transposelistoflist(listofgradient)
+        grad_D_sum = [np.sum(t,axis=0) for t in grad_D_transpose]
+        gradients_batch = []
+        for i in range(len(grad_D_sum)):
+            gradients_batch.append((grad_D_sum[i] + gradientP[i])*(1/instance_index))
+        
+        j /= (instance_index+1)
+        s = sumofweights(weights_list,bias=b)*lambda_reg/(2*(instance_index+1))
+        allj = j+s # total cose with regularization
+
+        # update weights
+        for i in range(len(weights_list)):
+            weights_list[i] -= learning_rate*gradients_batch[i]
+
+    return weights_list, allj, j #j is j without regularization: only for testing
+
